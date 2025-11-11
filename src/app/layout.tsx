@@ -5,7 +5,7 @@ import { AuthProvider } from '../context/AuthContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Business-Sales Tracker Dashboard',
+  title: 'Business-Sales Tracker',
   description: 'Real-time sales and expense analytics powered by prodigygenes magic🌟.',
 };
 
