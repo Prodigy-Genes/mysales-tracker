@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await auth.signOut();
       setUser(null);
     } catch (error) {
-      console.error('Sign-Out Error:', error);
+      console.error('SignOut Error:', error);
     }
   }, []);
 
