@@ -33,7 +33,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onSignIn }) => {
             <div className="bg-blue-600 p-2 rounded-full">
               <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="text-sm sm:text-base font-semibold text-blue-700">Business Analytics Platform</span>
+            <span className="text-sm sm:text-base font-semibold text-blue-700">MySales-Tracker</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold text-black leading-snug">
