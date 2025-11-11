@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+💰 My Sales Tracker: Real-Time Business Dashboard
 
-## Getting Started
+This is a professional, authenticated sales and expense tracking dashboard built to provide real-time financial analytics. It was developed collaboratively and is deployed for free on Cloudflare Pages.
 
-First, run the development server:
+🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+Secure Authentication: User sign-in via Google using Firebase Authentication.
+
+Private Data: Firestore Security Rules ensure each user can only access their own sales and expense records.
+
+Real-Time Analytics: Net Income, Total Sales, and Total Expenses are calculated instantly on data entry.
+
+Visual Reports: Weekly Sales Trends (Line Chart) and Expense Breakdown by Category (Pie Chart).
+
+Performance: Built with Next.js (TypeScript) and deployed on Cloudflare Pages for speed and reliability.
+
+🛠️ Technology Stack
+
+Framework: Next.js 14+ (App Router)
+
+Language: TypeScript
+
+Styling: Tailwind CSS
+
+Database & Auth: Google Firebase (Authentication & Firestore)
+
+Charts: Recharts
+
+Deployment: Cloudflare Pages
+
+⚙️ Setup and Installation
+
+1. Initial Setup
+
+Clone the repository:
+
+git clone https://github.com/Prodigy-Genes/mysales-tracker.git
+cd mysales-tracker
+
+
+Install dependencies using pnpm:
+
+pnpm install
+
+
+2. Firebase Configuration (CRITICAL)
+
+You must set up a Firebase project and enable Google Sign-In under the Authentication tab.
+
+Create a file named .env.local in the root directory.
+
+Add your Firebase credentials using the NEXT_PUBLIC_ prefix:
+
+# .env.local
+NEXT_PUBLIC_FIREBASE_API_KEY=""
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=""
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=""
+NEXT_PUBLIC_FIREBASE_APP_ID=""
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=""
+
+
+3. Database Security
+
+The application uses path-based security to ensure data is private. You must apply these rules in your Firebase Console (Firestore Database > Rules):
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+         allow read, write: if request.auth.uid != null && request.auth.uid == userId;
+    }
+  }
+}
+
+
+4. Running Locally
+
 pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open http://localhost:3000 to view the application.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🌐 Deployment to Cloudflare Pages
 
-## Learn More
+The app is configured for free deployment via GitHub integration with Cloudflare Pages.
 
-To learn more about Next.js, take a look at the following resources:
+Connect GitHub: In the Cloudflare Dashboard, create a new Pages project and connect it to this GitHub repository.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Build Settings: Use the following configuration:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Framework: Next.js
 
-## Deploy on Vercel
+Build command: pnpm run build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Build output directory: out
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Environment Variables: Manually add all NEXT_PUBLIC_FIREBASE_... keys and their corresponding values to the Environment variables section in Cloudflare Pages settings.
+
+Compatibility Flag (Crucial Fix): To resolve Node.js compatibility errors, you must add the following flag in Settings > Functions > Compatibility Flags:
+
+Flag Name: nodejs_compat_populate_process_env
+
+Apply to: Production and Preview
+
+This configuration ensures a stable build and runtime environment for your Next.js application on Cloudflare.
