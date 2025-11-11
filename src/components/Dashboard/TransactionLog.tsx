@@ -36,6 +36,14 @@ const TransactionLog: React.FC<TransactionLogProps> = ({
     });
   };
 
+  const formatDateShort = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric'
+    });
+  };
+
   const getCategoryColor = (category: string): string => {
     const colors: { [key: string]: string } = {
       'Marketing': 'bg-purple-100 text-purple-700 border-purple-200',
@@ -70,22 +78,22 @@ const TransactionLog: React.FC<TransactionLogProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-in">
+    <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-in mx-4 sm:mx-0">
       {/* Tab Header */}
-      <div className="border-b border-gray-100 bg-gray-50 px-6 py-4">
-        <div className="flex items-center space-x-1">
+      <div className="border-b border-gray-100 bg-gray-50 px-3 sm:px-6 py-3 sm:py-4">
+        <div className="flex items-center gap-1 sm:gap-2">
           <button
-            className={`relative px-6 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${
+            className={`relative flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 ${
               activeTab === 'sales'
                 ? 'bg-white text-indigo-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
             }`}
             onClick={() => onTabChange('sales')}
           >
-            <div className="flex items-center space-x-2">
-              <Receipt className="w-4 h-4" />
-              <span>Sales Log</span>
-              <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
+              <Receipt className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="truncate">Sales</span>
+              <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${
                 activeTab === 'sales' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-600'
               }`}>
                 {sales.length}
@@ -94,17 +102,17 @@ const TransactionLog: React.FC<TransactionLogProps> = ({
           </button>
 
           <button
-            className={`relative px-6 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${
+            className={`relative flex-1 sm:flex-none px-3 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 ${
               activeTab === 'expenses'
                 ? 'bg-white text-indigo-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
             }`}
             onClick={() => onTabChange('expenses')}
           >
-            <div className="flex items-center space-x-2">
-              <CreditCard className="w-4 h-4" />
-              <span>Expenses Log</span>
-              <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
+              <CreditCard className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="truncate">Expenses</span>
+              <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${
                 activeTab === 'expenses' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-600'
               }`}>
                 {expenses.length}
@@ -114,8 +122,8 @@ const TransactionLog: React.FC<TransactionLogProps> = ({
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto">
         {sortedData.length > 0 ? (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -179,7 +187,7 @@ const TransactionLog: React.FC<TransactionLogProps> = ({
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <div className="flex items-center justify-end space-x-2 transition-opacity duration-200 opacity-100 sm:opacity-0 group-hover:sm:opacity-100">
+                    <div className="flex items-center justify-end space-x-2 transition-opacity duration-200 opacity-0 group-hover:opacity-100">
                       <button
                         onClick={() => onEdit(item)}
                         className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -216,6 +224,82 @@ const TransactionLog: React.FC<TransactionLogProps> = ({
             </p>
             <p className="text-sm text-gray-500">
               Start by adding your first {activeTab === 'sales' ? 'sale' : 'expense'} transaction
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden">
+        {sortedData.length > 0 ? (
+          <div className="divide-y divide-gray-100">
+            {sortedData.map((item, index) => (
+              <div 
+                key={item.id}
+                className="p-4 hover:bg-indigo-50/50 transition-colors duration-150"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
+                    <div className={`p-2 rounded-lg flex-shrink-0 ${activeTab === 'sales' ? 'bg-emerald-50' : 'bg-rose-50'}`}>
+                      {activeTab === 'sales' ? (
+                        <Receipt className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <CreditCard className="w-4 h-4 text-rose-600" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="text-sm font-medium text-gray-900">{formatDateShort(item.date)}</span>
+                        <span className={`text-base font-bold whitespace-nowrap ${
+                          activeTab === 'sales' ? 'text-emerald-600' : 'text-rose-600'
+                        }`}>
+                          {currencySymbol}{item.amount.toFixed(2)}
+                        </span>
+                      </div>
+                      {activeTab === 'expenses' && (
+                        <span className={`inline-flex items-center px-2 py-1 text-[10px] font-semibold rounded-md border ${getCategoryColor((item as Expense).category)}`}>
+                          {(item as Expense).category}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button
+                      onClick={() => onEdit(item)}
+                      className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors active:scale-95"
+                      title="Edit"
+                      disabled={deletingId === item.id}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 active:scale-95"
+                      title="Delete"
+                      disabled={deletingId === item.id}
+                    >
+                      {deletingId === item.id ? (
+                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 px-4">
+            <div className="bg-gray-50 p-3 rounded-full mb-3">
+              <FileText className="w-6 h-6 text-gray-400" />
+            </div>
+            <p className="text-sm font-semibold text-gray-900 mb-1 text-center">
+              No {activeTab === 'sales' ? 'sales' : 'expenses'} recorded yet
+            </p>
+            <p className="text-xs text-gray-500 text-center">
+              Start by adding your first {activeTab === 'sales' ? 'sale' : 'expense'}
             </p>
           </div>
         )}
