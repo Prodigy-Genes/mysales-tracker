@@ -35,6 +35,7 @@ Deployment: Cloudflare Pages
 Clone the repository:
 
 git clone https://github.com/Prodigy-Genes/mysales-tracker.git
+
 cd mysales-tracker
 
 
