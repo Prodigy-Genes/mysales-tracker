@@ -12,6 +12,9 @@ import ActionButtons from '@/src/components/Dashboard/ActionButtons';
 import ChartsSection from '@/src/components/Dashboard/ChartsSection';
 import TransactionLog from '@/src/components/Dashboard/TransactionLog';
 import TransactionModal from '@/src/components/Dashboard/TransactionModal';
+import EditTransactionModal from '../components/Dashboard/EditTransactionModal';
+import MonthComparison from '../components/Dashboard/MonthComparison';
+import CurrencySelector from '@/src/components/Dashboard/CurrencySelector';
 
 // Context and Types
 import { useAuth } from '@/src/context/AuthContext';
@@ -35,6 +38,9 @@ const DashboardPage: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [activeTab, setActiveTab] = useState<'sales' | 'expenses'>('sales');
   const [showForm, setShowForm] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Sale | Expense | null>(null);
+  const [currency, setCurrency] = useState<{ code: string; symbol: string }>({ code: 'GHS', symbol: '₵' });
+
 
   // --- Data Subscription Effect ---
   useEffect(() => {
@@ -132,6 +138,14 @@ const DashboardPage: React.FC = () => {
     setActiveTab(tab);
   }, []);
 
+  const handleEditTransaction = useCallback((transaction: Sale | Expense) => {
+    setEditingTransaction(transaction);
+  }, []);
+
+  const handleEditSuccess = useCallback(() => {
+    setEditingTransaction(null);
+  }, []);
+
   // Loading state
   if (loading) return null;
 
@@ -150,6 +164,10 @@ const DashboardPage: React.FC = () => {
           onSignOut={signOut}
         />
 
+        <div className="mt-4 flex justify-end">
+          <CurrencySelector onCurrencyChange={setCurrency} />
+        </div>
+
         <StatsSection
           totalSales={totalSales}
           totalExpenses={totalExpenses}
@@ -159,11 +177,19 @@ const DashboardPage: React.FC = () => {
         <ActionButtons
           onAddSale={() => handleOpenModal('sales')}
           onAddExpense={() => handleOpenModal('expenses')}
+          currencySymbol={currency.symbol}
+        />
+
+        <MonthComparison
+          sales={sales}
+          expenses={expenses}
+          currencySymbol={currency.symbol}
         />
 
         <ChartsSection
           weeklySalesData={weeklySalesData}
           expenseCategoryData={expenseCategoryData}
+          currencySymbol={currency.symbol}
         />
 
         <TransactionLog
@@ -171,6 +197,9 @@ const DashboardPage: React.FC = () => {
           onTabChange={handleTabChange}
           sales={sales}
           expenses={expenses}
+          userId={user.uid}
+          onEdit={handleEditTransaction}
+          currencySymbol={currency.symbol}
         />
 
         <TransactionModal
@@ -180,6 +209,16 @@ const DashboardPage: React.FC = () => {
           userId={user.uid}
           onAdd={handleAddTransaction}
         />
+
+        {editingTransaction && (
+          <EditTransactionModal
+            isOpen={!!editingTransaction}
+            onClose={() => setEditingTransaction(null)}
+            transaction={editingTransaction}
+            userId={user.uid}
+            onSuccess={handleEditSuccess}
+          />
+        )}
       </div>
     </div>
   );

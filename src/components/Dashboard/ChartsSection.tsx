@@ -6,6 +6,7 @@ import { ChartDataPoint, ExpenseCategoryData } from '@/src/types/dashboard';
 interface ChartsSectionProps {
   weeklySalesData: ChartDataPoint[];
   expenseCategoryData: ExpenseCategoryData[];
+  currencySymbol?: string;
 }
 
 const EXPENSE_COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF0054', '#8884d8'];
@@ -16,7 +17,7 @@ const formatWeekLabel = (weekKey: string): string => {
   return `W${parseInt(weekNum, 10) + 1} ${year}`;
 };
 
-const ChartsSection: React.FC<ChartsSectionProps> = ({ weeklySalesData, expenseCategoryData }) => {
+const ChartsSection: React.FC<ChartsSectionProps> = ({ weeklySalesData, expenseCategoryData, currencySymbol = '₵' }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-in">
       {/* Weekly Sales Trend */}
@@ -47,13 +48,13 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({ weeklySalesData, expenseC
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                   tickLine={{ stroke: '#e5e7eb' }}
                 />
-                <YAxis 
-                  tickFormatter={(value) => `$${value}`}
+                <YAxis
+                  tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`}
                   tick={{ fill: '#6b7280', fontSize: 12 }}
                   tickLine={{ stroke: '#e5e7eb' }}
                 />
-                <Tooltip 
-                  formatter={(value) => [`$${(value as number).toFixed(2)}`, 'Sales Total']} 
+                <Tooltip
+                  formatter={(value) => [`${currencySymbol}${(value as number).toFixed(2)}`, 'Sales Total']}
                   labelFormatter={formatWeekLabel}
                   contentStyle={{
                     backgroundColor: 'white',
@@ -63,6 +64,7 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({ weeklySalesData, expenseC
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                 />
+
                 <Legend 
                   wrapperStyle={{ paddingTop: '20px' }}
                   iconType="circle"
@@ -121,8 +123,8 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({ weeklySalesData, expenseC
                     <Cell key={`cell-${index}`} fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  formatter={(value) => [`$${(value as number).toFixed(2)}`, 'Total Spent']}
+                <Tooltip
+                  formatter={(value) => [`${currencySymbol}${(value as number).toFixed(2)}`, 'Total Spent']}
                   contentStyle={{
                     backgroundColor: 'white',
                     border: '1px solid #e5e7eb',
@@ -131,6 +133,7 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({ weeklySalesData, expenseC
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                   }}
                 />
+
                 <Legend 
                   layout="vertical" 
                   verticalAlign="middle" 

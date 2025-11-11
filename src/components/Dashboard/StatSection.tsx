@@ -5,15 +5,21 @@ interface StatsSectionProps {
   totalSales: number;
   totalExpenses: number;
   netIncome: number;
+  currencySymbol?: string;
 }
 
-const StatsSection: React.FC<StatsSectionProps> = ({ totalSales, totalExpenses, netIncome }) => {
+const StatsSection: React.FC<StatsSectionProps> = ({
+  totalSales,
+  totalExpenses,
+  netIncome,
+  currencySymbol = '₵',
+}) => {
   const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    // Format the number with commas and two decimals, then prepend symbol
+    return `${currencySymbol}${value.toLocaleString(undefined, {
       minimumFractionDigits: 2,
-    }).format(value);
+      maximumFractionDigits: 2,
+    })}`;
   };
 
   const stats = [
@@ -55,9 +61,11 @@ const StatsSection: React.FC<StatsSectionProps> = ({ totalSales, totalExpenses, 
             key={index}
             className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
           >
-            {/* Gradient background accent */}
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-5 rounded-full -mr-16 -mt-16`}></div>
-            
+            {/* Gradient accent */}
+            <div
+              className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-5 rounded-full -mr-16 -mt-16`}
+            ></div>
+
             <div className="p-6 relative">
               <div className="flex items-start justify-between mb-4">
                 <div className={`${stat.bgColor} p-3 rounded-xl`}>
@@ -73,7 +81,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ totalSales, totalExpenses, 
                   </div>
                 )}
               </div>
-              
+
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
                 <p className="text-3xl font-bold text-gray-900">

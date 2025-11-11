@@ -4,11 +4,13 @@ import { Plus, Receipt, CreditCard } from 'lucide-react';
 interface ActionButtonsProps {
   onAddSale: () => void;
   onAddExpense: () => void;
+  currencySymbol?: string; 
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ onAddSale, onAddExpense }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ onAddSale, onAddExpense, currencySymbol = '$' }) => {
   return (
     <div className="flex flex-col sm:flex-row justify-start gap-4 mb-8 animate-in">
+      {/* Add Sale Button */}
       <button
         onClick={onAddSale}
         className="group relative px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
@@ -18,11 +20,14 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ onAddSale, onAddExpense }
           <div className="bg-white bg-opacity-20 p-1.5 rounded-lg">
             <Receipt className="w-5 h-5" />
           </div>
-          <span>Add New Sale</span>
+          <span>
+            Add New Sale ({currencySymbol})
+          </span>
           <Plus className="w-4 h-4 ml-1" />
         </div>
       </button>
 
+      {/* Add Expense Button */}
       <button
         onClick={onAddExpense}
         className="group relative px-6 py-3.5 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-semibold rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
@@ -32,7 +37,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ onAddSale, onAddExpense }
           <div className="bg-white bg-opacity-20 p-1.5 rounded-lg">
             <CreditCard className="w-5 h-5" />
           </div>
-          <span>Add New Expense</span>
+          <span>
+            Add New Expense ({currencySymbol})
+          </span>
           <Plus className="w-4 h-4 ml-1" />
         </div>
       </button>

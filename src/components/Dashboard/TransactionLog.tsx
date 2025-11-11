@@ -1,15 +1,29 @@
-import React from 'react';
-import { FileText, Receipt, CreditCard, Calendar, DollarSign, Tag } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileText, Receipt, CreditCard, Calendar, DollarSign, Tag, Edit2, Trash2 } from 'lucide-react';
 import { Sale, Expense } from '@/src/types/dashboard';
+import { deleteSale, deleteExpense } from '@/src/utils/firestoreOperations';
 
 interface TransactionLogProps {
   activeTab: 'sales' | 'expenses';
   onTabChange: (tab: 'sales' | 'expenses') => void;
   sales: Sale[];
   expenses: Expense[];
+  userId: string;
+  onEdit: (transaction: Sale | Expense) => void;
+  currencySymbol?: string;
 }
 
-const TransactionLog: React.FC<TransactionLogProps> = ({ activeTab, onTabChange, sales, expenses }) => {
+const TransactionLog: React.FC<TransactionLogProps> = ({ 
+  activeTab, 
+  onTabChange, 
+  sales, 
+  expenses,
+  userId,
+  onEdit,
+  currencySymbol = '₵'
+}) => {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const listData = activeTab === 'sales' ? sales : expenses;
   const sortedData = [...listData].sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
 
@@ -32,6 +46,27 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ activeTab, onTabChange,
       'Other': 'bg-gray-100 text-gray-700 border-gray-200',
     };
     return colors[category] || colors['Other'];
+  };
+
+  const handleDelete = async (transaction: Sale | Expense) => {
+    if (!confirm(`Are you sure you want to delete this ${transaction.type}?`)) {
+      return;
+    }
+
+    setDeletingId(transaction.id);
+    
+    try {
+      if (transaction.type === 'sale') {
+        await deleteSale(userId, transaction.id);
+      } else {
+        await deleteExpense(userId, transaction.id);
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      alert('Failed to delete transaction. Please try again.');
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -105,6 +140,9 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ activeTab, onTabChange,
                     </div>
                   </th>
                 )}
+                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -130,7 +168,7 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ activeTab, onTabChange,
                     <span className={`text-sm font-bold ${
                       activeTab === 'sales' ? 'text-emerald-600' : 'text-rose-600'
                     }`}>
-                      ${item.amount.toFixed(2)}
+                      {currencySymbol}{item.amount.toFixed(2)}
                     </span>
                   </td>
                   {activeTab === 'expenses' && (
@@ -140,6 +178,30 @@ const TransactionLog: React.FC<TransactionLogProps> = ({ activeTab, onTabChange,
                       </span>
                     </td>
                   )}
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <div className="flex items-center justify-end space-x-2 transition-opacity duration-200 opacity-100 sm:opacity-0 group-hover:sm:opacity-100">
+                      <button
+                        onClick={() => onEdit(item)}
+                        className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="Edit"
+                        disabled={deletingId === item.id}
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                        title="Delete"
+                        disabled={deletingId === item.id}
+                      >
+                        {deletingId === item.id ? (
+                          <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
