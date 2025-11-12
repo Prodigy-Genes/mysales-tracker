@@ -91,7 +91,7 @@ const DashboardPage: React.FC = () => {
   }, [user]);
 
   // --- Analytics and Calculations ---
-  const { totalSales, totalExpenses, netIncome, weeklySalesData, expenseCategoryData } = useMemo(() => {
+  const { totalSales, totalExpenses,  weeklySalesData, expenseCategoryData } = useMemo(() => {
     const totalSales = sales.reduce((sum, sale) => sum + sale.amount, 0);
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
     const netIncome = totalSales - totalExpenses;
@@ -171,7 +171,6 @@ const DashboardPage: React.FC = () => {
         <StatsSection
           totalSales={totalSales}
           totalExpenses={totalExpenses}
-          netIncome={netIncome}
         />
 
         <ActionButtons

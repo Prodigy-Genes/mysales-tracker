@@ -4,23 +4,21 @@ import { TrendingUp, TrendingDown, DollarSign, Wallet, PiggyBank } from 'lucide-
 interface StatsSectionProps {
   totalSales: number;
   totalExpenses: number;
-  netIncome: number;
   currencySymbol?: string;
 }
 
 const StatsSection: React.FC<StatsSectionProps> = ({
   totalSales,
   totalExpenses,
-  netIncome,
   currencySymbol = '₵',
 }) => {
-  const formatCurrency = (value: number): string => {
-    // Format the number with commas and two decimals, then prepend symbol
-    return `${currencySymbol}${value.toLocaleString(undefined, {
+  const netIncome = totalSales - totalExpenses;
+
+  const formatCurrency = (value: number): string =>
+    `${currencySymbol}${value.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
-  };
 
   const stats = [
     {
@@ -45,9 +43,9 @@ const StatsSection: React.FC<StatsSectionProps> = ({
       title: 'Net Income',
       value: netIncome,
       icon: PiggyBank,
-      color: netIncome >= 0 ? 'from-indigo-500 to-indigo-600' : 'from-amber-500 to-amber-600',
-      bgColor: netIncome >= 0 ? 'bg-indigo-50' : 'bg-amber-50',
-      iconColor: netIncome >= 0 ? 'text-indigo-600' : 'text-amber-600',
+      color: netIncome >= 0 ? 'from-blue-500 to-blue-600' : 'from-amber-500 to-amber-600',
+      bgColor: netIncome >= 0 ? 'bg-blue-50' : 'bg-amber-50',
+      iconColor: netIncome >= 0 ? 'text-blue-600' : 'text-amber-600',
       trend: netIncome >= 0 ? '+' : '-',
     },
   ];
@@ -61,7 +59,6 @@ const StatsSection: React.FC<StatsSectionProps> = ({
             key={index}
             className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
           >
-            {/* Gradient accent */}
             <div
               className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-5 rounded-full -mr-16 -mt-16`}
             ></div>
@@ -85,7 +82,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {formatCurrency(Math.abs(stat.value))}
+                  {formatCurrency(stat.value)}
                 </p>
               </div>
             </div>
